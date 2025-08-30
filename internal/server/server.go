@@ -32,7 +32,7 @@ func NewServer(
 	scoreboardService *services.ScoreboardService,
 	userService *services.UserService,
 	executionService *services.ExecutionService,
-	packageService *services.PackageService,
+	// packageService *services.PackageService,
 	// aiService *services.AIService,
 ) *Server {
 	return &Server{
@@ -41,7 +41,7 @@ func NewServer(
 		scoreboardService: scoreboardService,
 		userService:       userService,
 		executionService:  executionService,
-		packageService:    packageService,
+		// packageService:    packageService,
 		// aiService:         aiService,
 	}
 }
@@ -82,11 +82,11 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("/api/git-username", apiHandler.GetGitUsername)
 	mux.HandleFunc("/api/main-scoreboard-rank", apiHandler.GetMainScoreboardRank)
 	mux.HandleFunc("/api/main-leaderboard", apiHandler.GetMainLeaderboard)
-
-	// Package challenge API routes
-	mux.HandleFunc("/api/package-leaderboard", apiHandler.GetPackageLeaderboard)
-	mux.HandleFunc("/api/packages/", apiHandler.HandlePackageChallenge)
-	mux.HandleFunc("/api/packages-save-to-filesystem", apiHandler.SavePackageChallengeToFilesystem)
+	//
+	// // Package challenge API routes
+	// mux.HandleFunc("/api/package-leaderboard", apiHandler.GetPackageLeaderboard)
+	// mux.HandleFunc("/api/packages/", apiHandler.HandlePackageChallenge)
+	// mux.HandleFunc("/api/packages-save-to-filesystem", apiHandler.SavePackageChallengeToFilesystem)
 
 	// AI-powered API routes
 	// mux.HandleFunc("/api/ai/code-review", apiHandler.AICodeReview)

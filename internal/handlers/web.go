@@ -65,7 +65,7 @@ func (h *WebHandler) HomePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get packages for the Package Mastery tab
-	packages := h.packageService.GetPackages()
+	// packages := h.packageService.GetPackages()
 
 	// Convert packages map to sorted slice by stars (descending)
 	type PackageWithName struct {
@@ -74,13 +74,13 @@ func (h *WebHandler) HomePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var packagesList []*PackageWithName
-	for name, pkg := range packages {
-		packagesList = append(packagesList, &PackageWithName{
-			Name:    name,
-			Package: pkg,
-		})
-	}
-
+	// for name, pkg := range packages {
+	// 	packagesList = append(packagesList, &PackageWithName{
+	// 		Name:    name,
+	// 		Package: pkg,
+	// 	})
+	// }
+	//
 	// Sort by stars descending (highest first)
 	sort.Slice(packagesList, func(i, j int) bool {
 		return packagesList[i].Stars > packagesList[j].Stars
@@ -103,17 +103,17 @@ func (h *WebHandler) HomePage(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Add package challenge attempts to userAttempt for UI consistency
-		for packageName, pkg := range packages {
-			for i, challengeID := range pkg.LearningPath {
-				attempted := h.hasUserAttemptedPackageChallenge(username, packageName, challengeID)
-				if attempted {
-					// Use negative IDs for package challenges to avoid conflicts with classic challenges
-					// Create unique negative ID based on package and challenge index
-					packageChallengeID := -(1000 + i*10 + len(packageName)) // Ensure unique negative IDs
-					userAttempt.AttemptedIDs[packageChallengeID] = true
-				}
-			}
-		}
+		// for packageName, pkg := range packages {
+		// 	for i, challengeID := range pkg.LearningPath {
+		// 		attempted := h.hasUserAttemptedPackageChallenge(username, packageName, challengeID)
+		// 		if attempted {
+		// 			// Use negative IDs for package challenges to avoid conflicts with classic challenges
+		// 			// Create unique negative ID based on package and challenge index
+		// 			packageChallengeID := -(1000 + i*10 + len(packageName)) // Ensure unique negative IDs
+		// 			userAttempt.AttemptedIDs[packageChallengeID] = true
+		// 		}
+		// 	}
+		// }
 	}
 
 	data := struct {
@@ -126,7 +126,7 @@ func (h *WebHandler) HomePage(w http.ResponseWriter, r *http.Request) {
 		Challenges:   challengeList,
 		Username:     username,
 		UserAttempts: userAttempt,
-		Packages:     packages,
+		// Packages:     packages,
 		PackagesList: packagesList,
 	}
 

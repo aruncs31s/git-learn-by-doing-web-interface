@@ -25,7 +25,7 @@ func main() {
 	scoreboardService := services.NewScoreboardService()
 	userService := services.NewUserService()
 	executionService := services.NewExecutionService()
-	packageService := services.NewPackageService()
+	// packageService := services.NewPackageService()
 	// Load data
 	log.Println("Loading challenges...")
 	if err := challengeService.LoadChallenges(); err != nil {
@@ -49,7 +49,7 @@ func main() {
 		scoreboardService,
 		userService,
 		executionService,
-		packageService,
+		// packageService,
 	)
 
 	// Setup routes
