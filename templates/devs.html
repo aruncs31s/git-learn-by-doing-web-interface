@@ -1,0 +1,164 @@
+{{define "content"}}
+<!-- Hero Section -->
+<div class="row mb-4">
+    <div class="col">
+        <div class="hero-section text-center py-4">
+            <div class="hero-content">
+                <h1 class="display-5 fw-bold mb-3">Meet Our Developers</h1>
+                <p class="lead mb-4">The talented developers behind Git Learn By Doing</p>
+
+                <!-- GitHub Stats -->
+                <div class="github-stats d-flex align-items-center justify-content-center flex-wrap">
+                    <div class="d-inline-flex align-items-center">
+                        <i class="bi bi-people-fill text-primary me-2"></i>
+                        <span class="fw-semibold">{{len .Developers}} Contributors</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Developers Grid -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+    {{range .Developers}}
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0 hover-card">
+            <div class="card-body text-center p-4">
+                <!-- Avatar -->
+                <div class="mb-3">
+                    <img
+                        src="https://github.com/{{.GitHubUsername}}.png"
+                        alt="{{.Name}}'s avatar"
+                        class="rounded-circle border border-3 border-primary"
+                        style="width: 80px; height: 80px; object-fit: cover;"
+                        onerror="this.src='https://via.placeholder.com/80x80/6c757d/ffffff?text={{substr .Name 0 1}}'"
+                    />
+                </div>
+
+                <!-- Name -->
+                <h5 class="card-title mb-2 fw-bold">{{.Name}}</h5>
+
+                <!-- GitHub Username -->
+                <p class="text-muted mb-3">
+                    <i class="bi bi-github me-1"></i>
+                    <a href="https://github.com/{{.GitHubUsername}}" target="_blank" class="text-decoration-none">
+                        @{{.GitHubUsername}}
+                    </a>
+                </p>
+
+                <!-- Categories -->
+                <div class="mb-3">
+                    {{range .Category}}
+                    <span class="badge bg-primary me-1 mb-1">{{.}}</span>
+                    {{end}}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="https://github.com/{{.GitHubUsername}}" target="_blank"
+                       class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-github me-1"></i>Profile
+                    </a>
+                    <a href="https://github.com/{{.GitHubUsername}}?tab=repositories" target="_blank"
+                       class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-code me-1"></i>Repos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+
+<!-- Stats Section -->
+{{if .Developers}}
+<div class="row mt-5">
+    <div class="col">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white text-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart-line me-2"></i>Developer Statistics
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <h3 class="text-primary mb-1">{{len .Developers}}</h3>
+                                <small class="text-muted">Total Developers</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <h3 class="text-success mb-1">{{len .Categories}}</h3>
+                                <small class="text-muted">Categories</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <h3 class="text-info mb-1">{{.TotalContributions}}</h3>
+                                <small class="text-muted">Contributions</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <h3 class="text-warning mb-1">{{.ActiveProjects}}</h3>
+                                <small class="text-muted">Active Projects</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}
+
+<!-- Call to Action -->
+<div class="row mt-4">
+    <div class="col">
+        <div class="card shadow-lg border-0 bg-gradient text-white"
+             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+            <div class="card-body text-center py-4">
+                <h4 class="mb-3">Want to Join Our Team?</h4>
+                <p class="mb-4">We're always looking for talented developers to contribute to our projects</p>
+                <a href="https://github.com/aruncs31s/git_by_doing_level_7" target="_blank"
+                   class="btn btn-light btn-lg">
+                    <i class="bi bi-github me-2"></i>Contribute on GitHub
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+.card img {
+    transition: transform 0.2s ease;
+}
+
+.card:hover img {
+    transform: scale(1.05);
+}
+</style>
+{{end}}

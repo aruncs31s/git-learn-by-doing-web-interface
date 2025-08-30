@@ -56,7 +56,7 @@ func main() {
 	mux := srv.SetupRoutes()
 
 	// Start server
-	port := 9099
+	port := 9100
 	log.Printf("Server starting on http://localhost:%d", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), mux))
 }

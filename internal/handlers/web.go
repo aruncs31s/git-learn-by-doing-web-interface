@@ -3,16 +3,16 @@ package handlers
 import (
 	"embed"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
-	"io/ioutil"
-	"os"
-	"path/filepath"
 	"web-ui/internal/models"
 	"web-ui/internal/services"
 	"web-ui/internal/utils"
@@ -138,9 +138,9 @@ func (h *WebHandler) HomePage(w http.ResponseWriter, r *http.Request) {
 }
 
 // ChallengePage renders a specific challenge page
-func (h *WebHandler) ChallengePage(w http.ResponseWriter, r *http.Request) {
+func (h *WebHandler) TaskPage(w http.ResponseWriter, r *http.Request) {
 	// Extract challenge ID from URL
-	path := strings.TrimPrefix(r.URL.Path, "/challenge/")
+	path := strings.TrimPrefix(r.URL.Path, "/task/")
 	id, err := strconv.Atoi(path)
 	if err != nil {
 		http.Error(w, "Invalid challenge ID", http.StatusBadRequest)
@@ -199,6 +199,102 @@ func (h *WebHandler) ChallengePage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Template execution error: %v", err)
 		// Don't call http.Error here since headers may already be sent during template execution
+	}
+}
+
+// DevsPage renders the developers page
+func (h *WebHandler) DevsPage(w http.ResponseWriter, r *http.Request) {
+	// Check if it's a specific developer request (with ID)
+	path := strings.TrimPrefix(r.URL.Path, "/devs")
+
+	// Remove leading slash if present
+	path = strings.TrimPrefix(path, "/")
+
+	totalcommits, err := utils.GetTotalCommitsByUser("aruncs31s")
+	developer := &models.Developer{
+		Name:           "Arun CS",
+		GitHubUsername: "aruncs31s",
+		Category:       []string{"developer", "full-stack"},
+		TotalCommits:   totalcommits,
+	}
+
+	if err != nil {
+		log.Printf("Error getting total commits for user %s: %v", developer.GitHubUsername, err)
+	}
+
+	// If path is not empty, try to parse as developer ID
+	if path != "" {
+		// Handle specific developer by ID
+		id, err := strconv.Atoi(path)
+		_ = id // Mark as used to avoid lint error
+		if err != nil {
+			http.Error(w, "Invalid developer ID", http.StatusBadRequest)
+			return
+		}
+		// For now, just show the main developer
+
+		tmpl, err := template.New("").Funcs(utils.GetTemplateFuncs()).ParseFS(h.content, "templates/base.html", "templates/devs.html")
+		if err != nil {
+			log.Printf("Template error: %v", err)
+			http.Error(w, "Failed to parse template: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		data := struct {
+			Developer *models.Developer
+			Username  string
+		}{
+			Developer: developer,
+			Username:  developer.GitHubUsername,
+		}
+
+		err = tmpl.ExecuteTemplate(w, "base", data)
+		if err != nil {
+			log.Printf("Template execution error: %v", err)
+		}
+		return
+	}
+
+	// Show all developers (default case for /devs)
+	developers := []*models.Developer{
+		developer,
+	}
+
+	// Collect all unique categories
+	categoryMap := make(map[string]bool)
+	for _, dev := range developers {
+		for _, cat := range dev.Category {
+			categoryMap[cat] = true
+		}
+	}
+	categories := make([]string, 0, len(categoryMap))
+	for cat := range categoryMap {
+		categories = append(categories, cat)
+	}
+
+	tmpl, err := template.New("").Funcs(utils.GetTemplateFuncs()).ParseFS(h.content, "templates/base.html", "templates/devs.html")
+	if err != nil {
+		log.Printf("Template error: %v", err)
+		http.Error(w, "Failed to parse template: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	type Data struct {
+		Developers         []*models.Developer
+		Categories         []string
+		TotalContributions int
+		ActiveProjects     int
+	}
+	data := Data{
+		Developers:         []*models.Developer{developer},
+		Categories:         categories,
+		TotalContributions: developer.TotalCommits,
+		ActiveProjects:     8,
+	}
+
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		log.Printf("Template execution error: %v", err)
 	}
 }
 
@@ -651,7 +747,7 @@ func (h *WebHandler) countPackageChallengeSubmissions(packageName, challengeID s
 func (h *WebHandler) createPackageLeaderboard(packageName string, challenges []*models.PackageChallenge) []models.PackageScoreboardEntry {
 	var leaderboard []models.PackageScoreboardEntry
 	userStats := make(map[string]*userPackageStats)
-	
+
 	// Load sponsors for package leaderboard (reuse from API handler)
 	// Create a temporary API handler instance to access LoadSponsors
 	tempHandler := &APIHandler{}

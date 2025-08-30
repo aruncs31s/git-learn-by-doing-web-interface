@@ -98,6 +98,19 @@ func markdownToHTML(markdown string) string {
 func GetTemplateFuncs() template.FuncMap {
 	return template.FuncMap{
 		"lower": strings.ToLower,
+		"substr": func(s string, start, length int) string {
+			if start < 0 {
+				start = 0
+			}
+			if start >= len(s) {
+				return ""
+			}
+			end := start + length
+			if end > len(s) {
+				end = len(s)
+			}
+			return s[start:end]
+		},
 		"truncateDescription": func(s string) string {
 			// Extract first paragraph that is not a heading or link
 			lines := strings.Split(s, "\n")

@@ -138,8 +138,8 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 
 	// Web routes
 	mux.HandleFunc("/", webHandler.HomePage)
-	mux.HandleFunc("/tasks/", webHandler.ChallengePage)
-	mux.HandleFunc("/devs/", webHandler.DevsPage)
+	mux.HandleFunc("/task/", webHandler.TaskPage)
+	mux.HandleFunc("/devs", webHandler.DevsPage)
 	// mux.HandleFunc("/interview", webHandler.InterviewPage)
 	mux.HandleFunc("/scoreboard", webHandler.ScoreboardPage)
 	// mux.HandleFunc("/scoreboard/", webHandler.ScoreChallengeHandler)

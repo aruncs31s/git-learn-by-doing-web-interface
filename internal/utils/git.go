@@ -3,6 +3,7 @@ package utils
 import (
 	"os/exec"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -86,4 +87,27 @@ func IsGitRepository() bool {
 	cmd := exec.Command("git", "status")
 	err := cmd.Run()
 	return err == nil
+}
+
+func GetTotalCommits() (int, error) {
+	cmd := exec.Command("git", "rev-list", "--count", "HEAD")
+	output, err := cmd.Output()
+	if err != nil {
+		return 0, err
+	}
+	count, err := strconv.Atoi(strings.TrimSpace(string(output)))
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func GetTotalCommitsByUser(username string) (int, error) {
+	cmd := exec.Command("git", "log", "--author="+username, "--pretty=format:%H")
+	output, err := cmd.Output()
+	if err != nil {
+		return 0, err
+	}
+	commits := strings.Split(strings.TrimSpace(string(output)), "\n")
+	return len(commits), nil
 }

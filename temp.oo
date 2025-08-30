@@ -1,0 +1,40 @@
+func (h *WebHandler) DevsPage(w http.ResponseWriter, r *http.Request) {
+	// Extract developer ID from URL
+	path := strings.TrimPrefix(r.URL.Path, "/devs/")
+	id, err := strconv.Atoi(path)
+	if err != nil {
+		http.Error(w, "Invalid developer ID", http.StatusBadRequest)
+		return
+	}
+	// Using Me as test developer
+	developer := &models.Developer{
+		Name:            "Arun CS",
+		GitHubUsername:  "aruncs31s",
+		Category:        []string{"developer"},
+	}
+	
+	username := developer.GitHubUsername
+	h.setUsernameCookie(w, username)
+
+
+	tmpl, err := template.New("").Funcs(utils.GetTemplateFuncs()).ParseFS(h.content, "templates/base.html", "templates/devs.html")
+	if err != nil {
+		log.Printf("Template error: %v", err)
+		http.Error(w, "Failed to parse template: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		Developer *models.Developer
+		Username  string
+	}{
+		Developer: developer,
+		Username:  username,
+	}
+
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		log.Printf("Template execution error: %v", err)
+		// Don't call http.Error here since headers may already be sent during template execution
+	}
+	o
