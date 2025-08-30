@@ -1,0 +1,37 @@
+{{define "scripts"}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Bootstrap tabs if they exist
+        const tabElems = document.querySelectorAll('#scoreboardTabs a');
+        if (tabElems.length > 0) {
+            tabElems.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    this.classList.add('active');
+                    
+                    // Remove active class from sibling tabs
+                    tabElems.forEach(t => {
+                        if (t !== this) t.classList.remove('active');
+                    });
+                    
+                    // Show the target tab pane
+                    const tabId = this.getAttribute('href');
+                    const tabPane = document.querySelector(tabId);
+                    
+                    // Hide all tab panes first
+                    document.querySelectorAll('.tab-pane').forEach(pane => {
+                        pane.classList.remove('show');
+                        pane.classList.remove('active');
+                    });
+                    
+                    // Show the target pane
+                    if (tabPane) {
+                        tabPane.classList.add('show');
+                        tabPane.classList.add('active');
+                    }
+                });
+            });
+        }
+    });
+</script>
+{{end}} 

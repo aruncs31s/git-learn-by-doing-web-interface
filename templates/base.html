@@ -1,0 +1,1544 @@
+<!doctype html>
+{{define "base"}}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Git Learn By Doing Level 7</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-CLQEFQ3ZEE"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-CLQEFQ3ZEE");
+    </script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+      body {
+        padding-top: 5rem;
+        background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Hero section styling */
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        padding: 2rem;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>')
+          repeat;
+        background-size: 40px 40px;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      /* GitHub stats styling */
+      .github-stats {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(15px);
+        border-radius: 25px;
+        padding: 6px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Mobile responsiveness */
+      @media (max-width: 768px) {
+        .hero-section {
+          border-radius: 8px;
+          margin: 0 -15px;
+          padding: 1.5rem;
+        }
+
+        .hero-content {
+          padding: 0 15px;
+        }
+
+        .display-5 {
+          font-size: 2rem !important;
+        }
+
+        .lead {
+          font-size: 1rem !important;
+        }
+
+        .btn {
+          font-size: 0.9rem;
+          padding: 0.375rem 0.75rem !important;
+        }
+
+        .github-stats {
+          margin-top: 1rem;
+          padding: 4px 8px;
+        }
+
+        .card-body {
+          padding: 0.75rem;
+        }
+
+        .challenge-card .card-header {
+          padding: 0.5rem 0.75rem;
+        }
+
+        .challenge-card .card-footer {
+          padding: 0.5rem 0.75rem;
+        }
+
+        .markdown-content {
+          padding: 0.75rem;
+        }
+
+        .markdown-content pre {
+          padding: 0.5rem;
+        }
+
+        .profile-avatar {
+          width: 28px;
+          height: 28px;
+        }
+
+        .profile-username {
+          font-size: 0.85rem;
+        }
+
+        .profile-dropdown {
+          min-width: 200px;
+          transform: translateX(-10px) !important;
+        }
+
+        .loading-spinner {
+          width: 18px;
+          height: 18px;
+        }
+
+        .loading-text {
+          font-size: 0.8rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .d-flex.justify-content-center.flex-wrap {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .btn {
+          width: 200px;
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      /* Feature cards */
+      .feature-card {
+        transition: all 0.3s ease;
+        border: none !important;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .feature-icon {
+        transition: transform 0.3s ease;
+      }
+
+      .feature-card:hover .feature-icon {
+        transform: scale(1.1);
+      }
+
+      .feature-card .card-body {
+        padding: 1.5rem;
+      }
+
+      /* Challenge cards */
+      .challenge-card {
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+        border: none !important;
+        border-radius: 15px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.08);
+      }
+
+      .challenge-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .challenge-card .card-header {
+        padding: 0.75rem 1rem;
+      }
+
+      .challenge-card .card-footer {
+        padding: 0.75rem 1rem;
+      }
+
+      .hover-shadow {
+        transition: all 0.3s ease;
+      }
+
+      /* Attempted challenge styling - Full Score (All tests passed) */
+      .attempted-challenge-full {
+        background: linear-gradient(
+          135deg,
+          #e8f5e8 0%,
+          #f0f8f0 100%
+        ) !important;
+        border: 2px solid #c3e6c3 !important;
+        border-left: 6px solid #28a745 !important;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(40, 167, 69, 0.15) !important;
+      }
+
+      .attempted-challenge-full:hover {
+        background: linear-gradient(
+          135deg,
+          #e0f0e0 0%,
+          #e8f5e8 100%
+        ) !important;
+        border-color: #a8d8a8 !important;
+        border-left-color: #28a745 !important;
+        box-shadow: 0 6px 25px rgba(40, 167, 69, 0.2) !important;
+      }
+
+      /* Attempted challenge styling - Partial Score (Some tests passed) */
+      .attempted-challenge-partial {
+        background: linear-gradient(
+          135deg,
+          #fff8e1 0%,
+          #fffaeb 100%
+        ) !important;
+        border: 2px solid #ffe0a3 !important;
+        border-left: 6px solid #ff8f00 !important;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(255, 143, 0, 0.15) !important;
+      }
+
+      .attempted-challenge-partial:hover {
+        background: linear-gradient(
+          135deg,
+          #fff6d9 0%,
+          #fff8e1 100%
+        ) !important;
+        border-color: #ffcc80 !important;
+        border-left-color: #ff8f00 !important;
+        box-shadow: 0 6px 25px rgba(255, 143, 0, 0.2) !important;
+      }
+
+      /* Fallback for basic attempted (when score data not available) */
+      .attempted-challenge {
+        background: linear-gradient(
+          135deg,
+          #f0f4ff 0%,
+          #f8faff 100%
+        ) !important;
+        border: 2px solid #d1d9ff !important;
+        border-left: 6px solid #667eea !important;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15) !important;
+      }
+
+      .attempted-challenge:hover {
+        background: linear-gradient(
+          135deg,
+          #e8edff 0%,
+          #f0f4ff 100%
+        ) !important;
+        border-color: #b8c5ff !important;
+        border-left-color: #667eea !important;
+        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.2) !important;
+      }
+
+      /* Buttons */
+      .btn {
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        padding: 0.375rem 0.75rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-outline-dark {
+        border-color: #495057;
+        color: #495057;
+      }
+
+      .btn-outline-dark:hover {
+        background-color: #495057;
+        border-color: #495057;
+        transform: translateY(-2px);
+      }
+
+      /* Badges */
+      .badge {
+        font-weight: 500;
+        padding: 0.375rem 0.75rem;
+      }
+
+      .badge-beginner {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+      }
+      .badge-intermediate {
+        background: linear-gradient(135deg, #fd7e14, #ffc107);
+        color: white;
+      }
+      .badge-advanced {
+        background: linear-gradient(135deg, #dc3545, #e83e8c);
+        color: white;
+      }
+
+      /* Navigation */
+      .navbar {
+        backdrop-filter: blur(10px);
+        background: rgba(33, 37, 41, 0.95) !important;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand {
+        font-weight: bold;
+        font-size: 1.5rem;
+      }
+
+      /* Form inputs */
+      .form-control {
+        border-radius: 50px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+        padding: 0.375rem 0.75rem;
+      }
+
+      .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      }
+
+      /* Username input with help tooltip */
+      .username-container {
+        position: relative;
+      }
+
+      .username-help-tooltip {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 1000;
+        margin-top: 0.25rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .username-help-tooltip::before {
+        content: "";
+        position: absolute;
+        top: -5px;
+        right: 20px;
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-bottom: 5px solid #667eea;
+      }
+
+      .username-help-tooltip.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .username-help-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        cursor: help;
+        transition: color 0.3s ease;
+        z-index: 5;
+      }
+
+      .username-help-icon:hover {
+        color: #667eea;
+      }
+
+      .form-control.has-help {
+        padding-right: 2rem;
+      }
+
+      /* Editor and content */
+      .editor-container {
+        height: 500px;
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        overflow: hidden;
+      }
+
+      .markdown-content {
+        line-height: 1.6;
+        padding: 1rem;
+      }
+
+      .markdown-content h1,
+      .markdown-content h2,
+      .markdown-content h3 {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        color: #495057;
+      }
+
+      .markdown-content pre {
+        padding: 0.75rem;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        margin: 0.5rem 0;
+      }
+
+      .markdown-content code {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        padding: 0.15rem 0.4rem;
+        border-radius: 6px;
+        font-size: 0.9em;
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      /* Footer */
+      footer {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+        border-top: 1px solid #dee2e6;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #764ba2, #667eea);
+      }
+
+      /* Pulsing animation for new features */
+      .new-indicator {
+        animation: pulse-warning 2s infinite;
+        z-index: 10;
+      }
+
+      .new-indicator-gray {
+        animation: pulse-gray 2s infinite;
+        z-index: 10;
+      }
+
+      @keyframes pulse-warning {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+        }
+        70% {
+          transform: scale(1.1);
+          box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+        }
+      }
+
+      @keyframes pulse-gray {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(108, 117, 125, 0.7);
+        }
+        70% {
+          transform: scale(1.1);
+          box-shadow: 0 0 0 10px rgba(108, 117, 125, 0);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(108, 117, 125, 0);
+        }
+      }
+
+      /* Card bodies - reduce padding */
+      .card-body {
+        padding: 1rem;
+      }
+
+      /* Button padding adjustment */
+      .btn-lg {
+        padding: 0.5rem 1rem;
+      }
+
+      .btn-sm {
+        padding: 0.25rem 0.5rem;
+      }
+
+      /* Profile Component Styles */
+      .profile-container {
+        position: relative;
+      }
+
+      .profile-display {
+        position: relative;
+      }
+
+      .profile-avatar-container {
+        display: flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .profile-avatar-container:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+      }
+
+      .profile-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        margin-right: 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .profile-username {
+        color: white;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-right: 0.5rem;
+        white-space: nowrap;
+      }
+
+      .profile-dropdown-icon {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+      }
+
+      .profile-avatar-container[aria-expanded="true"] .profile-dropdown-icon {
+        transform: rotate(180deg);
+      }
+
+      .profile-dropdown {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.95);
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        min-width: 250px;
+        right: 0 !important;
+        left: auto !important;
+        transform: translateX(-20px) !important;
+        overflow: hidden;
+      }
+
+      .profile-dropdown .dropdown-header {
+        color: #667eea;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0.5rem 1rem;
+      }
+
+      .profile-dropdown .dropdown-item {
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        margin: 0.125rem 0.25rem;
+        transition: all 0.3s ease;
+        color: #495057;
+        font-weight: 500;
+        border: none;
+      }
+
+      .profile-dropdown .dropdown-item:hover {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .profile-dropdown .dropdown-item i {
+        width: 16px;
+        text-align: center;
+      }
+
+      /* Profile Statistics Styling */
+      .profile-dropdown .px-3 {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        margin: 0 0.5rem;
+        border-radius: 8px;
+      }
+
+      .profile-dropdown .small {
+        font-size: 0.7rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .profile-dropdown .fs-5 {
+        font-size: 1.1rem !important;
+      }
+
+      .username-input-container {
+        position: relative;
+      }
+
+      /* Loading State */
+      .profile-loading {
+        display: flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+      }
+
+      .loading-spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 0.5rem;
+      }
+
+      .loading-text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .profile-avatar {
+          width: 28px;
+          height: 28px;
+        }
+
+        .profile-username {
+          font-size: 0.85rem;
+        }
+
+        .profile-dropdown {
+          min-width: 200px;
+          transform: translateX(-10px) !important;
+        }
+
+        .loading-spinner {
+          width: 18px;
+          height: 18px;
+        }
+
+        .loading-text {
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="/">Go Interview Practice</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Challenges</a>
+            </li>
+            <li class="nav-item position-relative">
+              <a class="nav-link" href="/interview">
+                Interview Simulator
+                <span
+                  class="position-absolute top-0 start-100 translate-middle p-1 bg-secondary border border-light rounded-circle new-indicator-gray"
+                  style="margin-left: -8px; margin-top: 2px"
+                >
+                  <span class="visually-hidden">New</span>
+                </span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/scoreboard">Scoreboard</a>
+            </li>
+          </ul>
+          <div class="d-flex">
+            <div class="profile-container">
+              <div
+                class="profile-display"
+                id="profile-display"
+                style="display: none"
+              >
+                <div
+                  class="profile-avatar-container"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <img
+                    id="profile-avatar"
+                    class="profile-avatar"
+                    src=""
+                    alt="Profile"
+                  />
+                  <span id="profile-username" class="profile-username"></span>
+                  <i class="bi bi-chevron-down profile-dropdown-icon"></i>
+                </div>
+                <ul class="dropdown-menu profile-dropdown">
+                  <li>
+                    <h6 class="dropdown-header">
+                      <i class="bi bi-git me-2"></i>
+                      <span id="profile-source-text"
+                        >Auto-detected from git</span
+                      >
+                    </h6>
+                  </li>
+                  <li><hr class="dropdown-divider" /></li>
+
+                  <!-- Statistics Section -->
+                  <li>
+                    <h6 class="dropdown-header">
+                      <i class="bi bi-graph-up me-2"></i>
+                      Your Progress
+                    </h6>
+                  </li>
+                  <li class="px-3 py-2">
+                    <div class="row g-2 text-center">
+                      <div class="col-4">
+                        <div class="small text-muted">Attempted</div>
+                        <div
+                          class="fw-bold text-primary fs-5"
+                          id="stat-attempted"
+                        >
+                          -
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <div class="small text-muted">Completed</div>
+                        <div
+                          class="fw-bold text-success fs-5"
+                          id="stat-completed"
+                        >
+                          -
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <div class="small text-muted">Avg Score</div>
+                        <div
+                          class="fw-bold text-warning fs-5"
+                          id="stat-average"
+                        >
+                          -
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row g-2 text-center mt-2">
+                      <div class="col-12">
+                        <div class="small text-muted">Main Scoreboard Rank</div>
+                        <div class="fw-bold text-info" id="stat-rank">-</div>
+                      </div>
+                    </div>
+                  </li>
+
+                  <!-- Profile Badge Section -->
+                  <li>
+                    <h6 class="dropdown-header">
+                      <i class="bi bi-award me-2"></i>
+                      Your Badge
+                    </h6>
+                  </li>
+                  <li class="px-3 py-2">
+                    <div class="badge-section">
+                      <!-- Badge Preview -->
+                      <div class="text-center mb-3">
+                        <div id="profile-badge-container" style="display: none">
+                          <img
+                            id="profile-badge"
+                            src=""
+                            alt="Go Interview Practice Badge"
+                            style="
+                              max-width: 100%;
+                              height: auto;
+                              border-radius: 4px;
+                              cursor: pointer;
+                            "
+                            onclick="window.open('https://github.com/RezaSi/go-interview-practice', '_blank')"
+                          />
+                        </div>
+                        <div
+                          id="profile-badge-loading"
+                          class="text-muted small"
+                        >
+                          <i class="bi bi-hourglass-split me-1"></i>Loading
+                          badge preview...
+                        </div>
+                        <div
+                          id="profile-badge-error"
+                          style="display: none"
+                          class="text-muted small"
+                        >
+                          <i class="bi bi-exclamation-triangle me-1"></i>Badge
+                          not available yet
+                        </div>
+                      </div>
+
+                      <!-- Copy Section -->
+                      <div class="badge-copy-section">
+                        <div class="small text-muted mb-2">
+                          Copy & paste into your GitHub profile:
+                        </div>
+                        <div class="input-group input-group-sm">
+                          <input
+                            type="text"
+                            id="badge-markdown"
+                            class="form-control font-monospace small"
+                            readonly
+                            value="[![Go Interview Practice Achievement](https://raw.githubusercontent.com/RezaSi/go-interview-practice/main/badges/YOUR_USERNAME.svg)](https://github.com/RezaSi/go-interview-practice)"
+                            style="font-size: 0.75rem; line-height: 1.2"
+                          />
+                          <button
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            id="copy-badge-btn"
+                            title="Copy badge markdown"
+                          >
+                            <i class="bi bi-clipboard" id="copy-icon"></i>
+                          </button>
+                        </div>
+                        <div
+                          class="small text-success mt-1"
+                          id="copy-success"
+                          style="display: none"
+                        >
+                          <i class="bi bi-check-circle me-1"></i>Copied to
+                          clipboard!
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <li><hr class="dropdown-divider" /></li>
+
+                  <li>
+                    <a class="dropdown-item" href="#" id="view-github-profile">
+                      <i class="bi bi-github me-2"></i>View GitHub Profile
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="/scoreboard">
+                      <i class="bi bi-trophy me-2"></i>View Scoreboard
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#" id="refresh-progress">
+                      <i class="bi bi-arrow-clockwise me-2"></i>Refresh Progress
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a class="dropdown-item" href="#" id="change-username">
+                      <i class="bi bi-pencil me-2"></i>Change Username
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="profile-loading" id="profile-loading">
+                <div class="loading-spinner"></div>
+                <span class="loading-text">Detecting username...</span>
+              </div>
+              <div
+                class="username-input-container"
+                id="username-input-container"
+                style="display: none"
+              >
+                <input
+                  type="text"
+                  id="username"
+                  class="form-control me-2 has-help"
+                  placeholder="GitHub Username"
+                />
+                <i
+                  class="bi bi-question-circle username-help-icon"
+                  id="username-help-icon"
+                ></i>
+                <div class="username-help-tooltip" id="username-help-tooltip">
+                  <i class="bi bi-lightbulb me-1"></i>Enter your GitHub username
+                  to track progress
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container mt-5 flex-grow-1">{{template "content" .}}</main>
+
+    <footer class="bg-light py-4 mt-auto">
+      <div class="container text-center">
+        <p class="mb-0 text-muted">
+          Go Interview Practice - Build your Go skills with coding challenges
+        </p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.14.0/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script>
+      // Store username in localStorage and cookies
+      document.addEventListener("DOMContentLoaded", function () {
+        const usernameInput = document.getElementById("username");
+        const helpIcon = document.getElementById("username-help-icon");
+        const helpTooltip = document.getElementById("username-help-tooltip");
+        const profileDisplay = document.getElementById("profile-display");
+        const usernameInputContainer = document.getElementById(
+          "username-input-container",
+        );
+        const profileLoading = document.getElementById("profile-loading");
+        const profileAvatar = document.getElementById("profile-avatar");
+        const profileUsername = document.getElementById("profile-username");
+        const profileSourceText = document.getElementById(
+          "profile-source-text",
+        );
+        const viewGithubProfile = document.getElementById(
+          "view-github-profile",
+        );
+        const refreshProgress = document.getElementById("refresh-progress");
+        const changeUsername = document.getElementById("change-username");
+
+        if (usernameInput && helpIcon && helpTooltip) {
+          // Function to show profile instead of input
+          function showProfile(username, source = "manual") {
+            if (username) {
+              // Hide loading and input, show profile
+              profileLoading.style.display = "none";
+              usernameInputContainer.style.display = "none";
+              profileDisplay.style.display = "block";
+
+              // Set profile data
+              profileAvatar.src = `https://github.com/${username}.png`;
+              profileUsername.textContent = username;
+
+              // Update source text
+              const sourceTexts = {
+                "remote-origin": "Auto-detected from git remote",
+                "git-config": "Auto-detected from git config",
+                cookie: "Saved from previous session",
+                localStorage: "Saved locally",
+                manual: "Manually entered",
+              };
+              profileSourceText.textContent =
+                sourceTexts[source] || "GitHub username";
+
+              // Set GitHub profile link
+              viewGithubProfile.href = `https://github.com/${username}`;
+
+              // Automatically refresh user attempts to show progress
+              refreshUserAttempts(username);
+            }
+          }
+
+          // Function to show input (hide profile and loading)
+          function showInput() {
+            profileLoading.style.display = "none";
+            profileDisplay.style.display = "none";
+            usernameInputContainer.style.display = "block";
+          }
+
+          // Function to show loading state
+          function showLoading(text = "Detecting username...") {
+            profileLoading.style.display = "flex";
+            profileDisplay.style.display = "none";
+            usernameInputContainer.style.display = "none";
+            profileLoading.querySelector(".loading-text").textContent = text;
+          }
+
+          // Function to show/hide help based on username presence
+          function updateHelpVisibility() {
+            if (!usernameInput.value.trim()) {
+              helpIcon.style.display = "block";
+              // Auto-show tooltip for empty input (with delay)
+              setTimeout(() => {
+                if (!usernameInput.value.trim()) {
+                  helpTooltip.classList.add("show");
+                }
+              }, 1000);
+            } else {
+              helpIcon.style.display = "none";
+              helpTooltip.classList.remove("show");
+            }
+          }
+
+          // Show tooltip on help icon hover/click
+          helpIcon.addEventListener("mouseenter", function () {
+            helpTooltip.classList.add("show");
+          });
+
+          helpIcon.addEventListener("mouseleave", function () {
+            if (usernameInput.value.trim()) {
+              helpTooltip.classList.remove("show");
+            }
+          });
+
+          helpIcon.addEventListener("click", function () {
+            helpTooltip.classList.toggle("show");
+            usernameInput.focus();
+          });
+
+          // Hide tooltip when user starts typing
+          usernameInput.addEventListener("input", function () {
+            updateHelpVisibility();
+          });
+
+          // Hide tooltip when input gets focus and has value
+          usernameInput.addEventListener("focus", function () {
+            if (this.value.trim()) {
+              helpTooltip.classList.remove("show");
+            }
+          });
+
+          // Show tooltip when input loses focus and is empty
+          usernameInput.addEventListener("blur", function () {
+            setTimeout(() => {
+              if (
+                !this.value.trim() &&
+                !helpTooltip.matches(":hover") &&
+                !helpIcon.matches(":hover")
+              ) {
+                helpTooltip.classList.add("show");
+              }
+            }, 200);
+          });
+
+          // Load saved username (try git first, then cookie, then localStorage)
+          async function loadUsername() {
+            // Start with loading state
+            showLoading("Detecting username...");
+
+            let savedUsername = "";
+            let source = "manual";
+
+            // First try to get from git configuration
+            try {
+              const gitResponse = await fetch("/api/git-username");
+              if (gitResponse.ok) {
+                const gitData = await gitResponse.json();
+                if (gitData.success && gitData.username) {
+                  savedUsername = gitData.username;
+                  source = gitData.source;
+
+                  console.log(
+                    `GitHub username auto-detected from git: ${savedUsername} (source: ${gitData.source})`,
+                  );
+                }
+              }
+            } catch (error) {
+              console.log("Could not auto-detect git username:", error.message);
+            }
+
+            // If no git username found, check for cookie
+            if (!savedUsername) {
+              showLoading("Checking saved username...");
+              const cookies = document.cookie.split(";");
+              for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith("username=")) {
+                  savedUsername = cookie.substring("username=".length);
+                  source = "cookie";
+                  break;
+                }
+              }
+            }
+
+            // If no cookie, check localStorage
+            if (!savedUsername) {
+              savedUsername = localStorage.getItem("githubUsername");
+              if (savedUsername) {
+                source = "localStorage";
+              }
+            }
+
+            // Small delay for better UX (avoid flashing)
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            if (savedUsername) {
+              usernameInput.value = savedUsername;
+              showProfile(savedUsername, source);
+            } else {
+              showInput();
+              updateHelpVisibility();
+            }
+          }
+
+          // Function to refresh user attempts and update challenge cards
+          async function refreshUserAttempts(username) {
+            if (!username) return;
+
+            // If we're on the home page, use the comprehensive refresh function
+            if (typeof window.autoRefreshAttempts === "function") {
+              window.autoRefreshAttempts();
+              return;
+            }
+
+            // Otherwise, use simplified refresh for other pages
+            try {
+              const response = await fetch("/api/refresh-attempts", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  username: username,
+                }),
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                console.log("User attempts refreshed:", data);
+
+                // Update challenge cards if we have the data
+                if (data.success && data.attemptedIds) {
+                  updateChallengeCards(data.attemptedIds, data.scores || {});
+                  updateProfileStatistics(data.attemptedIds, data.scores || {});
+                }
+              }
+            } catch (error) {
+              console.error("Error refreshing user attempts:", error);
+            }
+          }
+
+          // Function to update challenge cards with user progress
+          function updateChallengeCards(attemptedIds, scores) {
+            Object.keys(attemptedIds).forEach((challengeId) => {
+              const challengeCard =
+                document.querySelector(
+                  `[data-challenge-id="${challengeId}"]`,
+                ) ||
+                document.querySelector(
+                  `.challenge-item[data-challenge-id="${challengeId}"]`,
+                ) ||
+                document.querySelector(`#challenge-${challengeId}`);
+
+              if (challengeCard) {
+                // Remove existing attempt classes
+                challengeCard.classList.remove(
+                  "attempted-challenge",
+                  "attempted-challenge-full",
+                  "attempted-challenge-partial",
+                );
+
+                // Add appropriate class based on score
+                const score = scores[challengeId];
+                if (score !== undefined) {
+                  if (score >= 100) {
+                    challengeCard.classList.add("attempted-challenge-full");
+                  } else if (score > 0) {
+                    challengeCard.classList.add("attempted-challenge-partial");
+                  } else {
+                    challengeCard.classList.add("attempted-challenge");
+                  }
+                } else {
+                  challengeCard.classList.add("attempted-challenge");
+                }
+              }
+            });
+          }
+
+          // Function to update profile statistics
+          function updateProfileStatistics(attemptedIds, scores) {
+            const statAttempted = document.getElementById("stat-attempted");
+            const statCompleted = document.getElementById("stat-completed");
+            const statAverage = document.getElementById("stat-average");
+            const statRank = document.getElementById("stat-rank");
+
+            if (!statAttempted) return; // Elements not available
+
+            // Calculate statistics
+            const attemptedCount = Object.keys(attemptedIds).length;
+            let completedCount = 0;
+            let totalScore = 0;
+            let scoreCount = 0;
+
+            Object.keys(scores).forEach((challengeId) => {
+              const score = scores[challengeId];
+              if (score !== undefined) {
+                totalScore += score;
+                scoreCount++;
+                if (score >= 100) {
+                  completedCount++;
+                }
+              }
+            });
+
+            const averageScore =
+              scoreCount > 0 ? Math.round(totalScore / scoreCount) : 0;
+
+            // Update display
+            statAttempted.textContent = attemptedCount;
+            statCompleted.textContent = completedCount;
+            statAverage.textContent = averageScore + "%";
+
+            // Get actual main scoreboard rank
+            updateMainScoreboardRank(
+              profileUsername.textContent || usernameInput.value,
+              completedCount,
+            );
+
+            // Load profile badge and update markdown
+            loadProfileBadge(
+              profileUsername.textContent || usernameInput.value,
+            );
+            updateProfileBadgeMarkdown(
+              profileUsername.textContent || usernameInput.value,
+            );
+          }
+
+          // Function to get user's rank in main scoreboard
+          async function updateMainScoreboardRank(username, completedCount) {
+            const statRank = document.getElementById("stat-rank");
+            if (!statRank || !username) return;
+
+            try {
+              const response = await fetch(
+                `/api/main-scoreboard-rank?username=${encodeURIComponent(username)}`,
+              );
+              if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                  // Update rank display
+                  if (data.rank > 0) {
+                    statRank.textContent = `#${data.rank}`;
+                    statRank.className = "fw-bold";
+
+                    // Color based on rank position
+                    if (data.rank === 1) {
+                      statRank.classList.add("text-warning"); // Gold
+                    } else if (data.rank <= 3) {
+                      statRank.classList.add("text-info"); // Silver/Bronze
+                    } else if (data.rank <= 10) {
+                      statRank.classList.add("text-success"); // Top 10
+                    } else {
+                      statRank.classList.add("text-primary"); // Others
+                    }
+                  } else {
+                    statRank.textContent = "Unranked";
+                    statRank.className = "fw-bold text-secondary";
+                  }
+                } else {
+                  // Fallback to completion count based display
+                  setFallbackRank(statRank, completedCount);
+                }
+              } else {
+                setFallbackRank(statRank, completedCount);
+              }
+            } catch (error) {
+              console.error("Error fetching rank:", error);
+              setFallbackRank(statRank, completedCount);
+            }
+          }
+
+          // Fallback ranking when API is not available
+          function setFallbackRank(statRank, completedCount) {
+            let rank = "Unranked";
+            if (completedCount >= 20) {
+              rank = "Master";
+            } else if (completedCount >= 15) {
+              rank = "Expert";
+            } else if (completedCount >= 10) {
+              rank = "Advanced";
+            } else if (completedCount >= 5) {
+              rank = "Intermediate";
+            } else if (completedCount > 0) {
+              rank = "Beginner";
+            }
+
+            statRank.textContent = rank;
+            statRank.className = "fw-bold text-secondary";
+          }
+
+          // Profile action handlers
+          if (changeUsername) {
+            changeUsername.addEventListener("click", function (e) {
+              e.preventDefault();
+              showInput();
+              usernameInput.focus();
+            });
+          }
+
+          if (refreshProgress) {
+            refreshProgress.addEventListener("click", function (e) {
+              e.preventDefault();
+              const username =
+                usernameInput.value || profileUsername.textContent;
+              if (username) {
+                // Show that we're refreshing (since the page will automatically refresh)
+                console.log(
+                  "Progress automatically refreshed when username detected",
+                );
+              }
+            });
+          }
+
+          // Load username asynchronously
+          loadUsername();
+
+          // Set up copy button for badge markdown
+          const copyBadgeBtn = document.getElementById("copy-badge-btn");
+          if (copyBadgeBtn) {
+            copyBadgeBtn.addEventListener("click", copyBadgeMarkdown);
+          }
+
+          // Save username when changed
+          usernameInput.addEventListener("change", function () {
+            const username = this.value.trim();
+            if (username) {
+              // Save to localStorage
+              localStorage.setItem("githubUsername", username);
+
+              // Save to cookie (expires in 30 days)
+              const expiryDate = new Date();
+              expiryDate.setDate(expiryDate.getDate() + 30);
+              document.cookie = `username=${username}; expires=${expiryDate.toUTCString()}; path=/`;
+
+              // Show profile and refresh attempts
+              showProfile(username, "manual");
+            }
+          });
+        }
+
+        // Function to load and display profile badge image
+        function loadProfileBadge(username) {
+          const badgeContainer = document.getElementById(
+            "profile-badge-container",
+          );
+          const badgeLoading = document.getElementById("profile-badge-loading");
+          const badgeError = document.getElementById("profile-badge-error");
+          const badgeImg = document.getElementById("profile-badge");
+
+          if (!badgeContainer || !username) return;
+
+          // Reset states
+          badgeContainer.style.display = "none";
+          badgeLoading.style.display = "block";
+          badgeError.style.display = "none";
+
+          // Use compact badge for popup (smaller size)
+          const badgeUrl = `https://raw.githubusercontent.com/RezaSi/go-interview-practice/main/badges/${username}_compact.svg`;
+
+          // Create a new image to test if badge exists
+          const testImg = new Image();
+
+          testImg.onload = function () {
+            // Badge exists, show it
+            badgeImg.src = badgeUrl;
+            badgeContainer.style.display = "block";
+            badgeLoading.style.display = "none";
+            badgeError.style.display = "none";
+          };
+
+          testImg.onerror = function () {
+            // Badge doesn't exist, show error
+            badgeContainer.style.display = "none";
+            badgeLoading.style.display = "none";
+            badgeError.style.display = "block";
+          };
+
+          // Start loading the test image
+          testImg.src = badgeUrl;
+        }
+
+        // Function to update badge markdown with username
+        function updateProfileBadgeMarkdown(username) {
+          const badgeMarkdown = document.getElementById("badge-markdown");
+          if (!badgeMarkdown || !username) return;
+
+          // Replace YOUR_USERNAME with actual username
+          const markdownText = `[![Go Interview Practice Achievement](https://raw.githubusercontent.com/RezaSi/go-interview-practice/main/badges/${username}.svg)](https://github.com/RezaSi/go-interview-practice)`;
+          badgeMarkdown.value = markdownText;
+        }
+
+        // Function to copy badge markdown to clipboard
+        function copyBadgeMarkdown() {
+          const badgeMarkdown = document.getElementById("badge-markdown");
+          const copySuccess = document.getElementById("copy-success");
+          const copyIcon = document.getElementById("copy-icon");
+
+          if (!badgeMarkdown) return;
+
+          // Select and copy the text
+          badgeMarkdown.select();
+          badgeMarkdown.setSelectionRange(0, 99999); // For mobile devices
+
+          try {
+            navigator.clipboard
+              .writeText(badgeMarkdown.value)
+              .then(() => {
+                // Show success message
+                copySuccess.style.display = "block";
+                copyIcon.className = "bi bi-check-circle";
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                  copySuccess.style.display = "none";
+                  copyIcon.className = "bi bi-clipboard";
+                }, 2000);
+              })
+              .catch(() => {
+                // Fallback for older browsers
+                document.execCommand("copy");
+                copySuccess.style.display = "block";
+                copyIcon.className = "bi bi-check-circle";
+
+                setTimeout(() => {
+                  copySuccess.style.display = "none";
+                  copyIcon.className = "bi bi-clipboard";
+                }, 2000);
+              });
+          } catch (err) {
+            console.error("Failed to copy: ", err);
+          }
+        }
+
+        // Initialize syntax highlighting
+        document.querySelectorAll("pre code").forEach((el) => {
+          hljs.highlightElement(el);
+        });
+
+        // Make updateProfileStatistics globally available for other pages
+        window.updateProfileStatistics = updateProfileStatistics;
+      });
+    </script>
+    {{block "scripts" .}}{{end}}
+  </body>
+</html>
+{{end}}

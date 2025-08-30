@@ -1,0 +1,526 @@
+{{define "content"}}
+<!-- Hero Section -->
+<div class="row mb-4">
+    <div class="col">
+        <div class="hero-section text-center py-4">
+            <div class="hero-content">
+                <h1 class="display-5 fw-bold mb-3">Git Learn By Doing</h1>
+                <!-- <p class="lead mb-4">Master Go programming with hands-on coding challenges</p> -->
+
+                <!-- Main Action Buttons -->
+                <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
+                    <a href="#challenges" class="btn btn-light px-4">
+                        <i class="bi bi-play-circle me-2"></i>Browse Challenges
+                    </a>
+                    <a href="https://github.com/aruncs31s/git_by_doing_level_7" class="btn btn-outline-light px-4"
+                        target="_blank">
+                        <i class="bi bi-github me-2"></i>View Source
+                    </a>
+                </div>
+
+                <!-- GitHub Stats & Sponsor -->
+                <div class="github-stats d-flex align-items-center flex-wrap">
+                    <!-- Star Button -->
+                    <div class="d-inline-flex align-items-center">
+                        <i class="bi bi-star-fill text-warning me-2"></i>
+                        <iframe
+                            src="https://ghbtns.com/github-btn.html?user=aruncs31s&repo=git_by_doing_level_7&type=star&count=true"
+                            frameborder="0" scrolling="0" width="100" height="20" title="GitHub Stars"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tab Content -->
+<div class="tab-content mt-4" id="challengeTypeContent">
+    <!-- Algorithm Challenges Tab -->
+    <div class="tab-pane fade show active" id="algorithm-challenges" role="tabpanel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="mb-1">Tasks</h3>
+                <p class="text-muted mb-0">Complete this tasks one by one</p>
+            </div>
+        </div>
+
+        <!-- Classic Challenges Grid -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4" id="classic-challenges-container">
+            {{range .Challenges}}
+            <div class="col challenge-item" data-difficulty="{{.Difficulty}}" data-id="{{.ID}}"
+                data-attempted="{{if and $.UserAttempts (index $.UserAttempts.AttemptedIDs .ID)}}true{{else}}false{{end}}">
+                <div
+                    class="card h-100 shadow-sm hover-shadow {{if and $.UserAttempts (index $.UserAttempts.AttemptedIDs .ID)}}attempted-challenge{{end}}">
+                    <div class="card-header py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge {{if eq .Difficulty " Beginner"}}bg-success{{else if eq
+                                .Difficulty "Intermediate" }}bg-warning{{else}}bg-danger{{end}}
+                                rounded-pill">{{.Difficulty}}</span>
+                            <span class="badge bg-secondary rounded-pill">Challenge #{{.ID}}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{.Title}}</h5>
+                        <div class="card-text challenge-description" data-raw-description="{{.Description}}">
+                            <!-- Description will be rendered by JavaScript -->
+                        </div>
+                        <div class="d-flex mt-3 gap-2">
+                            <span class="badge bg-light text-dark border"><i class="bi bi-book"></i> Learning
+                                Materials</span>
+                            <span class="badge bg-light text-dark border"><i class="bi bi-code-slash"></i> Test
+                                Cases</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between">
+                            <a href="/challenge/{{.ID}}" class="btn btn-primary">Start Challenge</a>
+                            <a href="/scoreboard/{{.ID}}" class="btn btn-outline-secondary">Scoreboard</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+
+    {{end}}
+
+    {{define "scripts"}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Filters
+            const filterButtons = document.querySelectorAll('[id^="filter-"]');
+            const challengeItems = document.querySelectorAll('.challenge-item');
+            const sortSelect = document.getElementById('sort-select');
+            const challengesContainer = document.getElementById('classic-challenges-container');
+            const usernameInput = document.getElementById('username');
+
+            // Auto-refresh attempts on page load if username is set
+            function autoRefreshAttempts() {
+                // Get username from either input field or profile component
+                let username = usernameInput?.value;
+                if (!username) {
+                    const profileUsername = document.getElementById('profile-username');
+                    username = profileUsername?.textContent;
+                }
+
+                if (!username) {
+                    return;
+                }
+
+                // Call API to refresh attempts
+                fetch('/api/refresh-attempts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("API Response:", data); // Debug logging
+                        if (data.success) {
+                            updateChallengeDisplay(data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error auto-refreshing attempts:", error);
+                    });
+            }
+
+            // Function to update challenge display (shared between auto-refresh and manual refresh)
+            function updateChallengeDisplay(data) {
+                // Reset all cards first
+                challengeItems.forEach(item => {
+                    const id = parseInt(item.getAttribute('data-id'));
+                    const card = item.querySelector('.card');
+
+                    // Remove existing attempt markers
+                    item.setAttribute('data-attempted', 'false');
+                    card.classList.remove('attempted-challenge', 'attempted-challenge-full', 'attempted-challenge-partial');
+                });
+
+                // Add attempt markers for attempted challenges
+                Object.keys(data.attemptedIds).forEach(id => {
+                    if (data.attemptedIds[id]) {
+                        const item = document.querySelector(`.challenge-item[data-id="${id}"]`);
+                        if (item) {
+                            // Mark as attempted
+                            item.setAttribute('data-attempted', 'true');
+                            const card = item.querySelector('.card');
+
+                            // Apply appropriate class based on score
+                            console.log(`Challenge ${id}: score = ${data.scores ? data.scores[id] : 'undefined'}`); // Debug logging
+                            if (data.scores && data.scores[id] !== undefined) {
+                                const score = data.scores[id];
+                                console.log(`Applying score-based class for challenge ${id}, score: ${score}`); // Debug logging
+                                if (score === 100) {
+                                    card.classList.add('attempted-challenge-full');
+                                    console.log(`Added full class for challenge ${id}`);
+                                } else if (score >= 40) {
+                                    card.classList.add('attempted-challenge-partial');
+                                    console.log(`Added partial class for challenge ${id}`);
+                                } else {
+                                    card.classList.add('attempted-challenge');
+                                    console.log(`Added basic class for challenge ${id}`);
+                                }
+                            } else {
+                                // Fallback when no score data
+                                console.log(`No score data for challenge ${id}, using fallback`);
+                                card.classList.add('attempted-challenge');
+                            }
+                        }
+                    }
+                });
+
+                // Update profile statistics if the function is available (from base.html)
+                if (typeof window.updateProfileStatistics === 'function') {
+                    window.updateProfileStatistics(data.attemptedIds, data.scores || {});
+                }
+            }
+
+            // Make autoRefreshAttempts and updateChallengeDisplay available globally
+            // so base.html can call them
+            window.autoRefreshAttempts = autoRefreshAttempts;
+            window.updateChallengeDisplay = updateChallengeDisplay;
+
+            // Run auto-refresh after short delay to ensure DOM is ready
+            setTimeout(autoRefreshAttempts, 1000);
+
+            // Sort challenges by default by difficulty
+            sortChallenges('difficulty');
+
+            // Hover effects for cards
+            document.querySelectorAll('.hover-shadow').forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    this.classList.add('shadow');
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+
+                card.addEventListener('mouseleave', function () {
+                    this.classList.remove('shadow');
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Format challenge descriptions
+            document.querySelectorAll('.challenge-description').forEach(descEl => {
+                const rawDesc = descEl.getAttribute('data-raw-description');
+                if (!rawDesc) return;
+
+                // Extract the first paragraph after the title
+                let description = '';
+
+                // Remove markdown links
+                const cleanDesc = rawDesc.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+
+                // Split by lines and look for the first paragraph
+                const lines = cleanDesc.split('\n');
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    // Skip title lines, empty lines, scoreboard links
+                    if (line.startsWith('#') || line === '' || line.startsWith('---') || line.startsWith('!') ||
+                        line.toLowerCase().includes('scoreboard') || line.toLowerCase().includes('view the scoreboard')) {
+                        continue;
+                    }
+
+                    // Found a paragraph, use it
+                    description = line;
+                    break;
+                }
+
+                // If no good paragraph found, use the first 150 chars
+                if (!description && cleanDesc.length > 0) {
+                    description = cleanDesc.substring(0, 150) + '...';
+                }
+
+                // Create clean preview
+                descEl.innerHTML = `<p class="text-muted">${description.substring(0, 120)}${description.length > 120 ? '...' : ''}</p>`;
+            });
+
+            // Filter challenges by difficulty
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const filter = this.id.replace('filter-', '');
+
+                    // Update active button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Show/hide challenges
+                    challengeItems.forEach(item => {
+                        if (filter === 'all') {
+                            item.style.display = '';
+                        } else {
+                            const difficulty = item.getAttribute('data-difficulty').toLowerCase();
+                            item.style.display = difficulty === filter.toLowerCase() ? '' : 'none';
+                        }
+                    });
+                });
+            });
+
+            // Sort challenges
+            sortSelect.addEventListener('change', function () {
+                sortChallenges(this.value);
+            });
+
+            // Sort challenges function
+            function sortChallenges(sortValue) {
+                const challenges = Array.from(challengeItems);
+
+                challenges.sort((a, b) => {
+                    if (sortValue === 'id-asc') {
+                        const idA = parseInt(a.querySelector('.badge.bg-secondary').textContent.match(/Challenge #(\d+)/)[1]);
+                        const idB = parseInt(b.querySelector('.badge.bg-secondary').textContent.match(/Challenge #(\d+)/)[1]);
+                        return idA - idB;
+                    } else if (sortValue === 'id-desc') {
+                        const idA = parseInt(a.querySelector('.badge.bg-secondary').textContent.match(/Challenge #(\d+)/)[1]);
+                        const idB = parseInt(b.querySelector('.badge.bg-secondary').textContent.match(/Challenge #(\d+)/)[1]);
+                        return idB - idA;
+                    } else if (sortValue === 'difficulty') {
+                        const diffMap = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
+                        const diffA = a.getAttribute('data-difficulty').toLowerCase();
+                        const diffB = b.getAttribute('data-difficulty').toLowerCase();
+                        return diffMap[diffA] - diffMap[diffB];
+                    }
+                });
+
+                // Reappend in sorted order
+                challenges.forEach(challenge => {
+                    challengesContainer.appendChild(challenge);
+                });
+            }
+
+            // Initialize: set all filter as active
+            document.getElementById('filter-all').classList.add('active');
+
+            // Package Challenges Filtering
+            const packageFilterButtons = document.querySelectorAll('[id^="package-filter-"]');
+            const packageCards = document.querySelectorAll('.package-card');
+            const packageSortSelect = document.getElementById('package-sort-select');
+            const packagesContainer = document.getElementById('packages-container');
+
+            // Package filter functionality
+            packageFilterButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Remove active class from all package filter buttons
+                    packageFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    const filter = this.id.replace('package-filter-', '');
+
+                    packageCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                            card.parentElement.style.display = 'block';
+                        } else {
+                            card.parentElement.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Package sort functionality
+            if (packageSortSelect) {
+                packageSortSelect.addEventListener('change', function () {
+                    sortPackages(this.value);
+                });
+            }
+
+            function sortPackages(sortValue) {
+                const packages = Array.from(packagesContainer.children);
+
+                packages.sort((a, b) => {
+                    if (sortValue === 'popularity') {
+                        const popA = parseInt(a.querySelector('.package-card').getAttribute('data-popularity') || '0');
+                        const popB = parseInt(b.querySelector('.package-card').getAttribute('data-popularity') || '0');
+                        return popB - popA; // Descending order: highest stars first
+                    } else if (sortValue === 'name') {
+                        const nameA = a.querySelector('h5').textContent;
+                        const nameB = b.querySelector('h5').textContent;
+                        return nameA.localeCompare(nameB);
+                    } else if (sortValue === 'difficulty') {
+                        // For now, sort by name since difficulty isn't implemented yet
+                        const nameA = a.querySelector('h5').textContent;
+                        const nameB = b.querySelector('h5').textContent;
+                        return nameA.localeCompare(nameB);
+                    }
+                });
+
+                // Reappend in sorted order
+                packages.forEach(packageCard => {
+                    packagesContainer.appendChild(packageCard);
+                });
+            }
+
+            // Packages are now pre-sorted by Go backend in popularity order
+
+            // Package Tips Modal Logic
+            const packageTab = document.getElementById('package-tab');
+            const packageTipsModal = new bootstrap.Modal(document.getElementById('packageTipsModal'));
+            const dontShowAgainCheckbox = document.getElementById('dontShowAgain');
+            // Check if user has seen the package tips before
+            const hasSeenPackageTips = localStorage.getItem('hasSeenPackageTips') === 'true';
+
+            // Initialize tooltip only for first-time users
+            let tooltip = null;
+            if (!hasSeenPackageTips) {
+                tooltip = new bootstrap.Tooltip(packageTab);
+
+                // Show tooltip briefly on page load to draw attention
+                setTimeout(() => {
+                    tooltip.show();
+                    setTimeout(() => {
+                        tooltip.hide();
+                    }, 3000); // Hide after 3 seconds
+                }, 1000); // Show after 1 second
+            }
+
+            // Show tips modal when Package Mastery tab is clicked for the first time
+            packageTab.addEventListener('click', function () {
+                // Dispose tooltip after first click (but keep the NEW badge)
+                if (tooltip) {
+                    tooltip.dispose();
+                    tooltip = null;
+                }
+
+                if (!hasSeenPackageTips) {
+                    // Small delay to let the tab switch animation complete
+                    setTimeout(() => {
+                        packageTipsModal.show();
+                    }, 300);
+                }
+            });
+
+            // Handle modal close and save preference
+            document.getElementById('packageTipsModal').addEventListener('hidden.bs.modal', function () {
+                const shouldNotShowAgain = dontShowAgainCheckbox.checked;
+                if (shouldNotShowAgain) {
+                    localStorage.setItem('hasSeenPackageTips', 'true');
+                } else {
+                    // If they didn't check "don't show again", mark as seen for this session only
+                    localStorage.setItem('hasSeenPackageTips', 'true');
+                }
+            });
+
+            // Reset tips option (for development/testing - remove in production)
+            // Uncomment the next line to reset the tips state for testing
+            // localStorage.removeItem('hasSeenPackageTips');
+        });
+    </script>
+
+    <style>
+        /* Custom styles for package challenges */
+        .package-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .package-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        }
+
+        .bg-gradient-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .bg-gradient-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        }
+
+        .bg-gradient-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+
+        .progress {
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 25px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-pills .nav-link:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: #007bff;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .hover-shadow {
+            transition: box-shadow 0.2s ease;
+        }
+
+        .hover-shadow:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .badge.bg-info.bg-opacity-10 {
+            border: 1px solid rgba(13, 202, 240, 0.3);
+        }
+
+        /* Tab content animations */
+        .tab-pane {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Permanent pulsing indicator */
+        .new-indicator {
+            animation: pulse-warning 2s infinite;
+            z-index: 10;
+        }
+
+        @keyframes pulse-warning {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+            }
+
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+            }
+        }
+
+        /* Custom tooltip styles */
+        .package-tooltip {
+            --bs-tooltip-bg: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            --bs-tooltip-color: white;
+            font-size: 0.875rem;
+        }
+    </style>
+    {{end}}
