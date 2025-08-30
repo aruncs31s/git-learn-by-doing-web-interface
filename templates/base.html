@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Git Learn By Doing Level 7</title>
+    <title>Go Interview Practice</title>
 
     <!-- Google tag (gtag.js) -->
     <script
@@ -350,10 +350,12 @@
         background: linear-gradient(135deg, #28a745, #20c997);
         color: white;
       }
+
       .badge-intermediate {
         background: linear-gradient(135deg, #fd7e14, #ffc107);
         color: white;
       }
+
       .badge-advanced {
         background: linear-gradient(135deg, #dc3545, #e83e8c);
         color: white;
@@ -487,6 +489,7 @@
           opacity: 0;
           transform: translateY(30px);
         }
+
         to {
           opacity: 1;
           transform: translateY(0);
@@ -537,10 +540,12 @@
           transform: scale(1);
           box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
         }
+
         70% {
           transform: scale(1.1);
           box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
         }
+
         100% {
           transform: scale(1);
           box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
@@ -552,10 +557,12 @@
           transform: scale(1);
           box-shadow: 0 0 0 0 rgba(108, 117, 125, 0.7);
         }
+
         70% {
           transform: scale(1.1);
           box-shadow: 0 0 0 10px rgba(108, 117, 125, 0);
         }
+
         100% {
           transform: scale(1);
           box-shadow: 0 0 0 0 rgba(108, 117, 125, 0);
@@ -728,6 +735,7 @@
         0% {
           transform: rotate(0deg);
         }
+
         100% {
           transform: rotate(360deg);
         }
@@ -759,6 +767,7 @@
       }
     </style>
   </head>
+
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
       <div class="container">
@@ -774,21 +783,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link" href="/">Challenges</a>
-            </li>
-            <li class="nav-item position-relative">
-              <a class="nav-link" href="/interview">
-                Interview Simulator
-                <span
-                  class="position-absolute top-0 start-100 translate-middle p-1 bg-secondary border border-light rounded-circle new-indicator-gray"
-                  style="margin-left: -8px; margin-top: 2px"
-                >
-                  <span class="visually-hidden">New</span>
-                </span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/scoreboard">Scoreboard</a>
+              <a class="nav-link" href="/">Tasks</a>
             </li>
           </ul>
           <div class="d-flex">
@@ -821,130 +816,70 @@
                       >
                     </h6>
                   </li>
-                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
 
                   <!-- Statistics Section -->
-                  <li>
-                    <h6 class="dropdown-header">
-                      <i class="bi bi-graph-up me-2"></i>
-                      Your Progress
-                    </h6>
-                  </li>
-                  <li class="px-3 py-2">
-                    <div class="row g-2 text-center">
-                      <div class="col-4">
-                        <div class="small text-muted">Attempted</div>
-                        <div
-                          class="fw-bold text-primary fs-5"
-                          id="stat-attempted"
-                        >
-                          -
-                        </div>
-                      </div>
-                      <div class="col-4">
-                        <div class="small text-muted">Completed</div>
-                        <div
-                          class="fw-bold text-success fs-5"
-                          id="stat-completed"
-                        >
-                          -
-                        </div>
-                      </div>
-                      <div class="col-4">
-                        <div class="small text-muted">Avg Score</div>
-                        <div
-                          class="fw-bold text-warning fs-5"
-                          id="stat-average"
-                        >
-                          -
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row g-2 text-center mt-2">
-                      <div class="col-12">
-                        <div class="small text-muted">Main Scoreboard Rank</div>
-                        <div class="fw-bold text-info" id="stat-rank">-</div>
-                      </div>
-                    </div>
-                  </li>
+                  <!-- <li> -->
+                  <!--   <h6 class="dropdown-header"> -->
+                  <!--     <i class="bi bi-graph-up me-2"></i> -->
+                  <!--     Your Progress -->
+                  <!--   </h6> -->
+                  <!-- </li> -->
+                  <!-- <li class="px-3 py-2"> -->
+                  <!--   <div class="row g-2 text-center"> -->
+                  <!--     <div class="col-4"> -->
+                  <!--       <div class="small text-muted">Attempted</div> -->
+                  <!--       <div -->
+                  <!--         class="fw-bold text-primary fs-5" -->
+                  <!--         id="stat-attempted" -->
+                  <!--       > -->
+                  <!--         - -->
+                  <!--       </div> -->
+                  <!--     </div> -->
+                  <!--     <div class="col-4"> -->
+                  <!--       <div class="small text-muted">Completed</div> -->
+                  <!--       <div -->
+                  <!--         class="fw-bold text-success fs-5" -->
+                  <!--         id="stat-completed" -->
+                  <!--       > -->
+                  <!--         - -->
+                  <!--       </div> -->
+                  <!--     </div> -->
+                  <!--     <div class="col-4"> -->
+                  <!--       <div class="small text-muted">Avg Score</div> -->
+                  <!--       <div -->
+                  <!--         class="fw-bold text-warning fs-5" -->
+                  <!--         id="stat-average" -->
+                  <!--       > -->
+                  <!--         - -->
+                  <!--       </div> -->
+                  <!--     </div> -->
+                  <!--   </div> -->
+                  <!--   <div class="row g-2 text-center mt-2"> -->
+                  <!--     <div class="col-12"> -->
+                  <!--       <div class="small text-muted">Main Scoreboard Rank</div> -->
+                  <!--       <div class="fw-bold text-info" id="stat-rank">-</div> -->
+                  <!--     </div> -->
+                  <!--   </div> -->
+                  <!-- </li> -->
 
                   <!-- Profile Badge Section -->
-                  <li>
-                    <h6 class="dropdown-header">
-                      <i class="bi bi-award me-2"></i>
-                      Your Badge
-                    </h6>
-                  </li>
-                  <li class="px-3 py-2">
+                  <!-- <li> -->
+                  <!--   <h6 class="dropdown-header"> -->
+                  <!--     <i class="bi bi-award me-2"></i> -->
+                  <!--     Your Badge -->
+                  <!--   </h6> -->
+                  <!-- </li> -->
+                  <!-- <li class="px-3 py-2"> -->
                     <div class="badge-section">
-                      <!-- Badge Preview -->
-                      <div class="text-center mb-3">
-                        <div id="profile-badge-container" style="display: none">
-                          <img
-                            id="profile-badge"
-                            src=""
-                            alt="Go Interview Practice Badge"
-                            style="
-                              max-width: 100%;
-                              height: auto;
-                              border-radius: 4px;
-                              cursor: pointer;
-                            "
-                            onclick="window.open('https://github.com/RezaSi/go-interview-practice', '_blank')"
-                          />
-                        </div>
-                        <div
-                          id="profile-badge-loading"
-                          class="text-muted small"
-                        >
-                          <i class="bi bi-hourglass-split me-1"></i>Loading
-                          badge preview...
-                        </div>
-                        <div
-                          id="profile-badge-error"
-                          style="display: none"
-                          class="text-muted small"
-                        >
-                          <i class="bi bi-exclamation-triangle me-1"></i>Badge
-                          not available yet
-                        </div>
-                      </div>
-
                       <!-- Copy Section -->
-                      <div class="badge-copy-section">
-                        <div class="small text-muted mb-2">
-                          Copy & paste into your GitHub profile:
-                        </div>
-                        <div class="input-group input-group-sm">
-                          <input
-                            type="text"
-                            id="badge-markdown"
-                            class="form-control font-monospace small"
-                            readonly
-                            value="[![Go Interview Practice Achievement](https://raw.githubusercontent.com/RezaSi/go-interview-practice/main/badges/YOUR_USERNAME.svg)](https://github.com/RezaSi/go-interview-practice)"
-                            style="font-size: 0.75rem; line-height: 1.2"
-                          />
-                          <button
-                            class="btn btn-outline-secondary"
-                            type="button"
-                            id="copy-badge-btn"
-                            title="Copy badge markdown"
-                          >
-                            <i class="bi bi-clipboard" id="copy-icon"></i>
-                          </button>
-                        </div>
-                        <div
-                          class="small text-success mt-1"
-                          id="copy-success"
-                          style="display: none"
-                        >
-                          <i class="bi bi-check-circle me-1"></i>Copied to
-                          clipboard!
-                        </div>
-                      </div>
                     </div>
                   </li>
-                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
 
                   <li>
                     <a class="dropdown-item" href="#" id="view-github-profile">
@@ -961,7 +896,9 @@
                       <i class="bi bi-arrow-clockwise me-2"></i>Refresh Progress
                     </a>
                   </li>
-                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
                   <li>
                     <a class="dropdown-item" href="#" id="change-username">
                       <i class="bi bi-pencil me-2"></i>Change Username
@@ -1201,41 +1138,41 @@
           }
 
           // Function to refresh user attempts and update challenge cards
-          async function refreshUserAttempts(username) {
-            if (!username) return;
+          // async function refreshUserAttempts(username) {
+          //   if (!username) return;
 
-            // If we're on the home page, use the comprehensive refresh function
-            if (typeof window.autoRefreshAttempts === "function") {
-              window.autoRefreshAttempts();
-              return;
-            }
+          //   // If we're on the home page, use the comprehensive refresh function
+          //   if (typeof window.autoRefreshAttempts === "function") {
+          //     window.autoRefreshAttempts();
+          //     return;
+          //   }
 
-            // Otherwise, use simplified refresh for other pages
-            try {
-              const response = await fetch("/api/refresh-attempts", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  username: username,
-                }),
-              });
+          //   // Otherwise, use simplified refresh for other pages
+          //   try {
+          //     const response = await fetch("/api/refresh-attempts", {
+          //       method: "POST",
+          //       headers: {
+          //         "Content-Type": "application/json",
+          //       },
+          //       body: JSON.stringify({
+          //         username: username,
+          //       }),
+          //     });
 
-              if (response.ok) {
-                const data = await response.json();
-                console.log("User attempts refreshed:", data);
+          //     if (response.ok) {
+          //       const data = await response.json();
+          //       console.log("User attempts refreshed:", data);
 
-                // Update challenge cards if we have the data
-                if (data.success && data.attemptedIds) {
-                  updateChallengeCards(data.attemptedIds, data.scores || {});
-                  updateProfileStatistics(data.attemptedIds, data.scores || {});
-                }
-              }
-            } catch (error) {
-              console.error("Error refreshing user attempts:", error);
-            }
-          }
+          //       // Update challenge cards if we have the data
+          //       if (data.success && data.attemptedIds) {
+          //         updateChallengeCards(data.attemptedIds, data.scores || {});
+          //         updateProfileStatistics(data.attemptedIds, data.scores || {});
+          //       }
+          //     }
+          //   } catch (error) {
+          //     console.error("Error refreshing user attempts:", error);
+          //   }
+          // }
 
           // Function to update challenge cards with user progress
           function updateChallengeCards(attemptedIds, scores) {
@@ -1282,8 +1219,23 @@
             const statRank = document.getElementById("stat-rank");
 
             if (!statAttempted) return; // Elements not available
-
-            // Calculate statistics
+            // Example: Reading JSON file in browser
+            async function loadJSONData() {
+              try {
+                const response = await fetch("/sample.json");
+                if (!response.ok) {
+                  throw new Error("Failed to load JSON file");
+                }
+                const data = await response.json();
+                console.log("Loaded data:", data);
+                console.log("Name:", data.name);
+                console.log("Age:", data.age);
+                return data;
+              } catch (error) {
+                console.error("Error loading JSON:", error);
+              }
+            }
+            loadJSONData();
             const attemptedCount = Object.keys(attemptedIds).length;
             let completedCount = 0;
             let totalScore = 0;
@@ -1538,6 +1490,8 @@
         window.updateProfileStatistics = updateProfileStatistics;
       });
     </script>
+
+    <script type="text/javascript" src="../../task-1/data.json"></script>
     {{block "scripts" .}}{{end}}
   </body>
 </html>

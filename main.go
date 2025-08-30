@@ -26,8 +26,6 @@ func main() {
 	userService := services.NewUserService()
 	executionService := services.NewExecutionService()
 	packageService := services.NewPackageService()
-	aiService := services.NewAIService()
-
 	// Load data
 	log.Println("Loading challenges...")
 	if err := challengeService.LoadChallenges(); err != nil {
@@ -35,14 +33,14 @@ func main() {
 	}
 
 	log.Println("Loading scoreboards...")
-	if err := scoreboardService.LoadScoreboards(challengeService.GetChallenges()); err != nil {
-		log.Fatalf("Failed to load scoreboards: %v", err)
-	}
-
-	log.Println("Loading packages...")
-	if err := packageService.LoadPackages(); err != nil {
-		log.Fatalf("Failed to load packages: %v", err)
-	}
+	// if err := scoreboardService.LoadScoreboards(challengeService.GetChallenges()); err != nil {
+	// 	log.Fatalf("Failed to load scoreboards: %v", err)
+	// }
+	//
+	// log.Println("Loading packages...")
+	// if err := packageService.LoadPackages(); err != nil {
+	// 	log.Fatalf("Failed to load packages: %v", err)
+	// }
 
 	// Initialize server
 	srv := server.NewServer(
@@ -52,14 +50,13 @@ func main() {
 		userService,
 		executionService,
 		packageService,
-		aiService,
 	)
 
 	// Setup routes
 	mux := srv.SetupRoutes()
 
 	// Start server
-	port := 8080
+	port := 9099
 	log.Printf("Server starting on http://localhost:%d", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), mux))
 }

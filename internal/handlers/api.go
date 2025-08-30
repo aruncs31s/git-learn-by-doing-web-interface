@@ -162,7 +162,7 @@ func NewAPIHandler(
 	userService *services.UserService,
 	executionService *services.ExecutionService,
 	packageService *services.PackageService,
-	aiService *services.AIService,
+	// aiService *services.AIService,
 ) *APIHandler {
 	return &APIHandler{
 		challengeService:  challengeService,
@@ -170,8 +170,8 @@ func NewAPIHandler(
 		userService:       userService,
 		executionService:  executionService,
 		packageService:    packageService,
-		aiService:         aiService,
-		submissions:       make([]models.Submission, 0),
+		// aiService:         aiService,
+		submissions: make([]models.Submission, 0),
 	}
 }
 
@@ -989,7 +989,8 @@ func (h *APIHandler) savePackageChallengeToFilesystem(request struct {
 	PackageName string `json:"packageName"`
 	ChallengeID string `json:"challengeId"`
 	Code        string `json:"code"`
-}) services.SaveSubmissionResponse {
+},
+) services.SaveSubmissionResponse {
 	// Get working directory for correct relative paths
 	workDir, _ := os.Getwd()
 
@@ -1008,13 +1009,13 @@ func (h *APIHandler) savePackageChallengeToFilesystem(request struct {
 	}
 
 	for _, dirPath := range pathOptions {
-		err := os.MkdirAll(dirPath, 0755)
+		err := os.MkdirAll(dirPath, 0o755)
 		if err != nil {
 			continue
 		}
 
 		solutionFile := filepath.Join(dirPath, "solution.go")
-		err = ioutil.WriteFile(solutionFile, []byte(request.Code), 0644)
+		err = ioutil.WriteFile(solutionFile, []byte(request.Code), 0o644)
 		if err != nil {
 			continue
 		}
@@ -1044,182 +1045,6 @@ func (h *APIHandler) savePackageChallengeToFilesystem(request struct {
 			"git push origin main",
 		},
 	}
-}
-
-// AICodeReview performs AI-powered code review
-func (h *APIHandler) AICodeReview(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var request struct {
-		ChallengeID int    `json:"challengeId"`
-		Code        string `json:"code"`
-		Context     string `json:"context"`
-	}
-
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		http.Error(w, "Invalid request data", http.StatusBadRequest)
-		return
-	}
-
-	challenge, exists := h.challengeService.GetChallenge(request.ChallengeID)
-	if !exists {
-		http.Error(w, "Challenge not found", http.StatusNotFound)
-		return
-	}
-
-	review, err := h.aiService.ReviewCode(request.Code, challenge, request.Context)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("AI review failed: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(review)
-}
-
-// AIInterviewerQuestions generates AI interviewer questions
-func (h *APIHandler) AIInterviewerQuestions(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var request struct {
-		ChallengeID  int    `json:"challengeId"`
-		Code         string `json:"code"`
-		UserProgress string `json:"userProgress"`
-	}
-
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		http.Error(w, "Invalid request data", http.StatusBadRequest)
-		return
-	}
-
-	challenge, exists := h.challengeService.GetChallenge(request.ChallengeID)
-	if !exists {
-		http.Error(w, "Challenge not found", http.StatusNotFound)
-		return
-	}
-
-	questions, err := h.aiService.GetInterviewerQuestions(request.Code, challenge, request.UserProgress)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("AI questions failed: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	response := struct {
-		Questions []string `json:"questions"`
-		Success   bool     `json:"success"`
-	}{
-		Questions: questions,
-		Success:   true,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
-
-// AICodeHint provides AI-powered code hints
-func (h *APIHandler) AICodeHint(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var request struct {
-		ChallengeID int    `json:"challengeId"`
-		Code        string `json:"code"`
-		HintLevel   int    `json:"hintLevel"`
-	}
-
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		http.Error(w, "Invalid request data", http.StatusBadRequest)
-		return
-	}
-
-	challenge, exists := h.challengeService.GetChallenge(request.ChallengeID)
-	if !exists {
-		http.Error(w, "Challenge not found", http.StatusNotFound)
-		return
-	}
-
-	// Validate hint level
-	if request.HintLevel < 1 || request.HintLevel > 4 {
-		request.HintLevel = 1
-	}
-
-	hint, err := h.aiService.GetCodeHint(request.Code, challenge, request.HintLevel)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("AI hint failed: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	response := struct {
-		Hint      string `json:"hint"`
-		HintLevel int    `json:"hintLevel"`
-		Success   bool   `json:"success"`
-	}{
-		Hint:      hint,
-		HintLevel: request.HintLevel,
-		Success:   true,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
-
-// AIDebugResponse provides raw AI response for debugging
-func (h *APIHandler) AIDebugResponse(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var request struct {
-		ChallengeID int    `json:"challengeId"`
-		Code        string `json:"code"`
-		Context     string `json:"context"`
-	}
-
-	err := json.NewDecoder(r.Body).Decode(&request)
-	if err != nil {
-		http.Error(w, "Invalid request data", http.StatusBadRequest)
-		return
-	}
-
-	challenge, exists := h.challengeService.GetChallenge(request.ChallengeID)
-	if !exists {
-		http.Error(w, "Challenge not found", http.StatusNotFound)
-		return
-	}
-
-	// Get raw AI response for debugging
-	prompt := h.aiService.BuildCodeReviewPrompt(request.Code, challenge, request.Context)
-	rawResponse, err := h.aiService.CallLLMRaw(prompt)
-
-	response := struct {
-		RawResponse string `json:"raw_response"`
-		Prompt      string `json:"prompt"`
-		Success     bool   `json:"success"`
-		Error       string `json:"error,omitempty"`
-	}{
-		RawResponse: rawResponse,
-		Prompt:      prompt,
-		Success:     err == nil,
-	}
-
-	if err != nil {
-		response.Error = err.Error()
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 // GitHubWebhookHandler handles GitHub sponsor webhooks

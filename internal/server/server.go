@@ -33,7 +33,7 @@ func NewServer(
 	userService *services.UserService,
 	executionService *services.ExecutionService,
 	packageService *services.PackageService,
-	aiService *services.AIService,
+	// aiService *services.AIService,
 ) *Server {
 	return &Server{
 		content:           content,
@@ -42,7 +42,7 @@ func NewServer(
 		userService:       userService,
 		executionService:  executionService,
 		packageService:    packageService,
-		aiService:         aiService,
+		// aiService:         aiService,
 	}
 }
 
@@ -60,7 +60,7 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 		s.userService,
 		s.executionService,
 		s.packageService,
-		s.aiService,
+		// s.aiService,
 	)
 
 	webHandler := handlers.NewWebHandler(
@@ -89,10 +89,10 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("/api/packages-save-to-filesystem", apiHandler.SavePackageChallengeToFilesystem)
 
 	// AI-powered API routes
-	mux.HandleFunc("/api/ai/code-review", apiHandler.AICodeReview)
-	mux.HandleFunc("/api/ai/interviewer-questions", apiHandler.AIInterviewerQuestions)
-	mux.HandleFunc("/api/ai/code-hint", apiHandler.AICodeHint)
-	mux.HandleFunc("/api/ai/debug", apiHandler.AIDebugResponse)
+	// mux.HandleFunc("/api/ai/code-review", apiHandler.AICodeReview)
+	// mux.HandleFunc("/api/ai/interviewer-questions", apiHandler.AIInterviewerQuestions)
+	// mux.HandleFunc("/api/ai/code-hint", apiHandler.AICodeHint)
+	// mux.HandleFunc("/api/ai/debug", apiHandler.AIDebugResponse)
 
 	// GitHub webhook route
 	mux.HandleFunc("/webhook/github", apiHandler.GitHubWebhookHandler)
@@ -138,28 +138,29 @@ func (s *Server) SetupRoutes() *http.ServeMux {
 
 	// Web routes
 	mux.HandleFunc("/", webHandler.HomePage)
-	mux.HandleFunc("/challenge/", webHandler.ChallengePage)
-	mux.HandleFunc("/interview", webHandler.InterviewPage)
+	mux.HandleFunc("/tasks/", webHandler.ChallengePage)
+	mux.HandleFunc("/devs/", webHandler.DevsPage)
+	// mux.HandleFunc("/interview", webHandler.InterviewPage)
 	mux.HandleFunc("/scoreboard", webHandler.ScoreboardPage)
-	mux.HandleFunc("/scoreboard/", webHandler.ScoreChallengeHandler)
-	mux.HandleFunc("/packages/", func(w http.ResponseWriter, r *http.Request) {
-		// Route to appropriate handler based on URL structure
-		parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
-		if len(parts) == 2 {
-			// /packages/gin -> package detail page
-			webHandler.PackageDetailPage(w, r)
-		} else if len(parts) == 3 {
-			if parts[2] == "scoreboard" {
-				// /packages/gin/scoreboard -> package leaderboard page
-				webHandler.PackageScoreboardPage(w, r)
-			} else {
-				// /packages/gin/challenge-1 -> package challenge page
-				webHandler.PackageChallengePage(w, r)
-			}
-		} else {
-			http.NotFound(w, r)
-		}
-	})
+	// mux.HandleFunc("/scoreboard/", webHandler.ScoreChallengeHandler)
+	// mux.HandleFunc("/packages/", func(w http.ResponseWriter, r *http.Request) {
+	// 	// Route to appropriate handler based on URL structure
+	// 	parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
+	// 	if len(parts) == 2 {
+	// 		// /packages/gin -> package detail page
+	// 		webHandler.PackageDetailPage(w, r)
+	// 	} else if len(parts) == 3 {
+	// 		if parts[2] == "scoreboard" {
+	// 			// /packages/gin/scoreboard -> package leaderboard page
+	// 			webHandler.PackageScoreboardPage(w, r)
+	// 		} else {
+	// 			// /packages/gin/challenge-1 -> package challenge page
+	// 			webHandler.PackageChallengePage(w, r)
+	// 		}
+	// 	} else {
+	// 		http.NotFound(w, r)
+	// 	}
+	// })
 
 	return mux
 }
